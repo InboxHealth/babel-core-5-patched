@@ -488,7 +488,7 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
       , ACCEPT_ITERABLES     = $iterDetect(function(iter){ new C(iter); }) // eslint-disable-line no-new
       // for early implementations -0 and +0 not the same
       , BUGGY_ZERO;
-    if(!ACCEPT_ITERABLES){ 
+    if(!ACCEPT_ITERABLES){
       C = wrapper(function(target, iterable){
         strictNew(target, C, NAME);
         var that = new Base;
@@ -3245,15 +3245,19 @@ var isSymbol = function(it){
 };
 
 var $defineProperty = function defineProperty(it, key, D){
-  if(D && has(AllSymbols, key)){
-    if(!D.enumerable){
-      if(!has(it, HIDDEN))setDesc(it, HIDDEN, createDesc(1, {}));
-      it[HIDDEN][key] = true;
-    } else {
-      if(has(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
-      D = _create(D, {enumerable: createDesc(0, false)});
-    } return setSymbolDesc(it, key, D);
-  } return setDesc(it, key, D);
+  try{
+    if(D && has(AllSymbols, key)){
+      if(!D.enumerable){
+        if(!has(it, HIDDEN))setDesc(it, HIDDEN, createDesc(1, {}));
+        it[HIDDEN][key] = true;
+      } else {
+        if(has(it, HIDDEN) && it[HIDDEN][key])it[HIDDEN][key] = false;
+        D = _create(D, {enumerable: createDesc(0, false)});
+      } return setSymbolDesc(it, key, D);
+    } return setDesc(it, key, D);
+  }catch(e){
+    console.log('Caught error in $defineProperty!', e);
+  }
 };
 var $defineProperties = function defineProperties(it, P){
   anObject(it);
